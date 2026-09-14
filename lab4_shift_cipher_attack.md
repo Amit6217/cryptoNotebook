@@ -13,21 +13,32 @@ Brute-force with dictionary scoring decrypts the ciphertext under all 26 keys an
 The candidate key maximizing the recognized word count is identified as the correct encryption key.
 
 ## Algorithm/Flowchart
-1. Input ciphertext $C$.
-2. **Chi-Square Attack**:
-   1. For each candidate shift key $k \in [0, 25]$:
-      - Decrypt ciphertext $C$ using key $k$ to obtain candidate plaintext $P_k$.
-      - Count observed frequencies $O_i$ of each letter A–Z in $P_k$.
-      - Compute expected counts $E_i = N \times f_{\text{English}}(i)$, where $N$ is total alphabetic count.
-      - Calculate $\chi^2 = \sum_{i=0}^{25} \frac{(O_i - E_i)^2}{E_i}$.
-   2. Select key $k$ corresponding to the lowest $\chi^2$ score.
-3. **Dictionary Scoring Attack**:
-   1. For each candidate shift key $k \in [0, 25]$:
-      - Decrypt ciphertext $C$ using key $k$ to obtain candidate plaintext $P_k$.
-      - Split $P_k$ into words using whitespace/punctuation delimiters.
-      - Count how many words match entries in `english_words.txt`.
-   2. Select key $k$ with the highest matching word count.
-4. Output predicted keys and decrypted plaintexts from both methods.
+
+```mermaid
+flowchart TD
+    A([Input Ciphertext C]) --> B[/"For each key k = 0 to 25"/]
+    B --> C["Decrypt: P_k = D(C, k)"]
+    C --> D1["Chi-Square Attack"]
+    C --> D2["Dictionary Attack"]
+
+    D1 --> E1["Count letter frequencies O_i in P_k"]
+    E1 --> F1["Compute expected E_i = N x f_English"]
+    F1 --> G1["Calculate chi-square score"]
+    G1 --> H1["Select k with lowest chi-square"]
+
+    D2 --> E2["Split P_k into words"]
+    E2 --> F2["Count matches in english_words.txt"]
+    F2 --> G2["Select k with highest word-match count"]
+
+    H1 --> I([Output Key & Plaintext])
+    G2 --> I
+```
+
+**Steps:**
+1. Input ciphertext C.
+2. **Chi-Square Attack:** For each k ∈ [0, 25] → decrypt → count letter frequencies → compute χ² against English frequencies → select k with lowest χ².
+3. **Dictionary Attack:** For each k ∈ [0, 25] → decrypt → split into words → count dictionary matches → select k with highest count.
+4. Output predicted keys and decrypted plaintexts.
 
 ## Important Commands
 ```bash

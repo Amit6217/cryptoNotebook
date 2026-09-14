@@ -11,13 +11,31 @@ Modular software design decouples CLI presentation, statistical processing, and 
 Activity logging with timestamps guarantees traceability and reproducibility across all operational workflows.
 
 ## Algorithm/Flowchart
-1. Initialize repository with Git and establish folder hierarchy (`datasets/`, `logs/`, source modules).
-2. Start the interactive CLI loop and display operational menu (`Encrypt`, `Decrypt`, `Attack`, `Analyze`, `Exit`).
-3. Capture user selection and append timestamped entry to `logs/activity.log`.
-4. If `Analyze` is chosen, prompt for target text file inside `datasets/`.
-5. Read file contents and compute total characters, words, lines, and unique characters.
-6. Calculate frequency distribution for letters `a`–`z` and print the summary report.
-7. Return to main menu until user chooses `Exit`.
+
+```mermaid
+flowchart TD
+    A([Start]) --> B[Initialize Git Repo & Folder Structure]
+    B --> C[Display Menu: Encrypt / Decrypt / Attack / Analyze / Exit]
+    C --> D[Capture User Selection]
+    D --> E[Log Selection with Timestamp to activity.log]
+    E --> F{User Choice?}
+    F -->|Analyze| G[Prompt for File from datasets/]
+    G --> H[Read File Contents]
+    H --> I[Compute Char, Word, Line Count & Unique Chars]
+    I --> J[Calculate Letter Frequency a-z]
+    J --> K[Print Summary Report]
+    K --> C
+    F -->|Encrypt / Decrypt / Attack| L[Execute Selected Operation]
+    L --> C
+    F -->|Exit| M([Stop])
+```
+
+**Steps:**
+1. Initialize Git repository and create folder hierarchy (`datasets/`, `logs/`, source modules).
+2. Display interactive menu: Encrypt, Decrypt, Attack, Analyze, Exit.
+3. Capture user selection and log with timestamp to `logs/activity.log`.
+4. If Analyze → prompt for file from `datasets/`, read contents, compute stats (chars, words, lines, unique chars), calculate letter frequency (a–z), print report.
+5. Loop back to menu until Exit.
 
 ## Important Commands
 ```bash

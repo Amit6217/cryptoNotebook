@@ -13,20 +13,33 @@ English text has $IC \approx 0.0667$ while random text has $IC \approx 0.0385$. 
 Partitioning ciphertext into $m$ independent cosets reduces the polyalphabetic cipher into $m$ monoalphabetic Caesar ciphers, solvable via chi-square goodness-of-fit against standard English frequencies.
 
 ## Algorithm/Flowchart
-1. Preprocess ciphertext with `clean_ciphertext()` to retain only uppercase letters A–Z.
-2. Determine key length using Kasiski Examination:
-   1. Detect repeated 3–5 character sequences using `find_repeated_patterns()`.
-   2. Calculate intervals between matching sequences with `calculate_distances()`.
-   3. Find integer factors of distances using `find_factors()`.
-   4. Tally factor votes across candidate key lengths (2–20) via `kasiski_analysis()`.
-3. Validate candidate key length using `calculate_ic()` to select length $m$ with average IC closest to English ($m = 14$, $IC \approx 0.0644$).
-4. Partition ciphertext into $m = 14$ cosets using `split_into_groups()`.
-5. For each coset $j \in [0, m-1]$:
-   1. Compute letter counts and percentages using `frequency_analysis()`.
-   2. Find best Caesar shift using `find_shift()` by minimizing $\chi^2$ against English letter distribution.
-6. Assemble recovered shifts into the keyword using `find_key()` $\to$ `AMBROISETHOMAS`.
-7. Decrypt ciphertext using `vigenere_decrypt()` with the recovered keyword.
-8. Re-encrypt plaintext using `vigenere_encrypt()` and execute `verify()` to ensure byte-exact match with preprocessed ciphertext (`PASS`).
+
+```mermaid
+flowchart TD
+    A([Input Ciphertext]) --> B["clean_ciphertext(): Keep A-Z only"]
+    B --> C["find_repeated_patterns(): Detect 3-5 char repeats"]
+    C --> D["calculate_distances(): Spacing between repeats"]
+    D --> E["find_factors(): Factor each distance"]
+    E --> F["kasiski_analysis(): Vote on candidate key lengths"]
+    F --> G["calculate_ic(): Validate with Index of Coincidence"]
+    G --> H["Best key length m=14, IC≈0.0644"]
+    H --> I["split_into_groups(): Partition into 14 cosets"]
+    I --> J[/"For each coset j = 0 to 13"/]
+    J --> K["frequency_analysis(): Letter distribution"]
+    K --> L["find_shift(): Chi-square vs English frequencies"]
+    L --> M["find_key(): Assemble shifts → AMBROISETHOMAS"]
+    M --> N["vigenere_decrypt(): Decrypt with recovered key"]
+    N --> O["vigenere_encrypt() + verify(): Re-encrypt & confirm PASS"]
+    O --> P([Output Plaintext & Key])
+```
+
+**Steps:**
+1. `clean_ciphertext()` → keep only uppercase A–Z.
+2. **Kasiski Examination:** `find_repeated_patterns()` → `calculate_distances()` → `find_factors()` → `kasiski_analysis()` to rank candidate key lengths.
+3. `calculate_ic()` validates best key length (m=14, IC ≈ 0.0644).
+4. `split_into_groups()` → partition into 14 cosets → for each: `frequency_analysis()` + `find_shift()` (chi-square).
+5. `find_key()` assembles shifts → **AMBROISETHOMAS**.
+6. `vigenere_decrypt()` → decrypt. `vigenere_encrypt()` + `verify()` → confirm PASS.
 
 ## Important Commands
 ```bash

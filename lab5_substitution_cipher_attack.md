@@ -11,17 +11,29 @@ Statistical cryptanalysis exploits single-letter frequency rankings, word struct
 By iteratively proposing letter substitutions, inspecting the partial plaintext, and correcting mappings, the secret key can be completely recovered without searching the full key space.
 
 ## Algorithm/Flowchart
-1. Read cleaned ciphertext input.
-2. Execute `frequency_analysis()` to compute letter counts and percentages, sorted in descending order.
-3. Execute `word_frequency_analysis()` to extract and rank single-letter, two-letter, three-letter, and repeated words.
-4. Execute `pattern_analysis()` to detect letter pattern signatures (e.g., ABCCD) and doubled letters.
-5. Provide interactive cryptanalysis menu:
-   1. Propose substitution mapping ($C \to P$).
-   2. Invoke `apply_substitution()` to replace mapped letters in ciphertext, filling unmapped characters with `'?'`.
-   3. Call `display_partial_plaintext()` to display side-by-side ciphertext and partial plaintext with the substitution table.
-   4. Undo incorrect guesses or auto-propose initial high-probability mappings as needed.
-6. Iteratively refine substitutions using English grammatical and contextual clues until all 26 letters are resolved.
-7. Call `verify_solution()` to re-encrypt recovered plaintext with the final key and verify an exact match with original ciphertext.
+
+```mermaid
+flowchart TD
+    A([Input Ciphertext]) --> B["frequency_analysis(): Letter counts & percentages"]
+    B --> C["word_frequency_analysis(): 1/2/3-letter & repeated words"]
+    C --> D["pattern_analysis(): Letter patterns & doubled letters"]
+    D --> E{All 26 Letters Mapped?}
+    E -->|No| F["Propose Substitution: C → P"]
+    F --> G["apply_substitution(): Replace known, show ? for unknown"]
+    G --> H["display_partial_plaintext(): Side-by-side view"]
+    H --> I{Mapping Correct?}
+    I -->|No| J[Undo Guess]
+    J --> E
+    I -->|Yes| E
+    E -->|Yes| K["verify_solution(): Re-encrypt & compare"]
+    K --> L([Output Recovered Key & Plaintext])
+```
+
+**Steps:**
+1. Read ciphertext → run `frequency_analysis()`, `word_frequency_analysis()`, `pattern_analysis()`.
+2. Interactive loop: propose substitution (C→P) → `apply_substitution()` → `display_partial_plaintext()`.
+3. If wrong → undo guess. If correct → continue until all 26 letters mapped.
+4. `verify_solution()`: re-encrypt recovered plaintext, confirm exact match with original ciphertext.
 
 ## Important Commands
 ```bash

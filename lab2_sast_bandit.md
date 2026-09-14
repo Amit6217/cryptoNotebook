@@ -11,13 +11,26 @@ It flags command injection risks from executing subprocesses with `shell=True` (
 SAST facilitates automated security auditing, reporting vulnerabilities categorized by severity (Low, Medium, High) and confidence levels.
 
 ## Algorithm/Flowchart
-1. Install Bandit in the environment using `pip`.
-2. Author a vulnerable Python test script embedding 5 distinct flaws (`B101`, `B105`, `B303`, `B311`, `B602`).
-3. Initiate session recording using `script sast_lab_log.txt`.
-4. Execute Bandit scanner against the target test script in recursive mode.
-5. Generate formal scan reports in plain text (`.txt`) and structured JSON (`.json`) formats.
-6. Exit the `script` recording session and display the recorded log file.
-7. Review identified issues, severity levels, and suggested remediations.
+
+```mermaid
+flowchart TD
+    A([Start]) --> B[Install Bandit via pip]
+    B --> C[Write Vulnerable Test Script with 5 Flaws]
+    C --> D[Start Terminal Recording: script sast_lab_log.txt]
+    D --> E[Run Bandit Scanner on Test Script]
+    E --> F[Generate Reports: TXT + JSON]
+    F --> G[Exit script Session]
+    G --> H[Review Findings: Severity & Remediation]
+    H --> I([Stop])
+```
+
+**Steps:**
+1. Install Bandit using `pip install bandit`.
+2. Write a vulnerable Python script embedding 5 flaws (B101, B105, B303, B311, B602).
+3. Start terminal recording with `script sast_lab_log.txt`.
+4. Run Bandit scanner in recursive mode on the test script.
+5. Export reports in TXT and JSON formats.
+6. Exit recording session and review findings (severity, remediation).
 
 ## Important Commands
 ```bash

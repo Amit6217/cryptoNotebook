@@ -11,13 +11,34 @@ However, static tools cannot comprehend execution context, semantic intent, or h
 Consequently, flaws such as plaintext file persistence and verbose error leaks bypass automated SAST scanners, underscoring the necessity of complementary manual code reviews.
 
 ## Algorithm/Flowchart
-1. Launch the Password Manager CLI and display login prompt.
-2. Verify user credentials against hardcoded admin username and password.
-3. If login fails, emit verbose debug message leaking the correct admin credentials.
-4. If login succeeds, present CRUD operations: Add, View, Search, Delete entries, or Exit.
-5. Save and retrieve password entries directly in plaintext format on persistent storage.
-6. Execute Bandit SAST scanner against the application source code.
-7. Compare detected findings with embedded vulnerabilities to identify SAST blind spots.
+
+```mermaid
+flowchart TD
+    A([Start]) --> B[Display Login Prompt]
+    B --> C[Enter Username & Password]
+    C --> D{Credentials Valid?}
+    D -->|No| E[Leak Valid Credentials in Debug Output]
+    E --> B
+    D -->|Yes| F[Show CRUD Menu: Add / View / Search / Delete / Exit]
+    F --> G{User Choice?}
+    G -->|Add| H[Store Entry in Plaintext File]
+    H --> F
+    G -->|View / Search| I[Read & Display from Plaintext File]
+    I --> F
+    G -->|Delete| J[Remove Entry from File]
+    J --> F
+    G -->|Exit| K[Run Bandit on Source Code]
+    K --> L[Compare Findings vs Embedded Vulnerabilities]
+    L --> M([Stop])
+```
+
+**Steps:**
+1. Launch Password Manager CLI → display login prompt.
+2. Verify credentials against hardcoded admin username/password.
+3. On failure → leak valid credentials in debug output (intentional vulnerability).
+4. On success → present CRUD menu: Add, View, Search, Delete, Exit.
+5. All entries stored/retrieved in plaintext (intentional vulnerability).
+6. Run Bandit on source → compare detected vs embedded vulnerabilities to identify SAST blind spots.
 
 ## Important Commands
 ```bash
