@@ -1,16 +1,10 @@
 # Lab 4 — Cryptanalysis of Shift (Caesar) Cipher
 
 ## Aim
-To implement and evaluate two cryptanalysis methods (Chi-Square Statistical Analysis and Brute Force with Dictionary Scoring) on the Shift Cipher in Python.
+To implement cryptanalysis of the Shift Cipher using Chi-Square analysis and Brute Force with Dictionary Scoring.
 
 ## Brief Theory
-The Shift (Caesar) Cipher encrypts letters via $E(x) = (x + k) \pmod{26}$ and decrypts via $D(y) = (y - k) \pmod{26}$ for key $k \in [0, 25]$.
-Because the key space is restricted to only 26 possible values, exhaustive search is trivial.
-Chi-square analysis measures the statistical discrepancy between candidate decryption letter frequencies and standard English frequencies:
-$$\chi^2 = \sum_{i=0}^{25} \frac{(O_i - E_i)^2}{E_i}$$
-The key yielding the minimum $\chi^2$ value corresponds to the most statistically probable English plaintext.
-Brute-force with dictionary scoring decrypts the ciphertext under all 26 keys and counts matching valid words against an English word list.
-The candidate key maximizing the recognized word count is identified as the correct encryption key.
+The Shift Cipher encrypts via $E(x) = (x + k) \bmod 26$ with key space of only 26 values. Chi-square analysis compares candidate decryption frequencies against English frequencies: $\chi^2 = \sum \frac{(O_i - E_i)^2}{E_i}$; the key with minimum χ² is selected. Dictionary scoring decrypts with all 26 keys and selects the key whose plaintext has the most English dictionary word matches.
 
 ## Algorithm/Flowchart
 
@@ -50,6 +44,32 @@ python main.py
 ```
 
 ## Observations
-- Both attack methods correctly recover the shift key for typical English ciphertexts.
-- Chi-square statistical attack is computationally fast and reliable for texts with $\ge 20$ letters, but can misidentify keys on short texts due to statistical noise.
-- Dictionary scoring works robustly even on short ciphertexts provided the plaintext contains recognizable words in the dictionary.
+
+### Results Table
+
+| TC# | Plaintext | Actual Key | χ² Key | χ² Score | χ² Correct? | Dict Key | Dict Score | Dict Correct? |
+|:---:|-----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1 | HELLO WORLD | 3 | 6 | 24.01 | ❌ | 3 | 2 | ✅ |
+| 2 | ATTACK AT DAWN | 5 | 5 | 33.12 | ✅ | 5 | 1 | ✅ |
+| 3 | CRYPTOGRAPHY IS FUN | 10 | 23 | 23.99 | ❌ | 10 | 2 | ✅ |
+| 4 | THIS IS A SIMPLE TEST | 7 | 7 | 21.82 | ✅ | 7 | 3 | ✅ |
+| 5 | THE QUICK BROWN FOX... | 12 | 12 | 109.32 | ✅ | 12 | 2 | ✅ |
+| 6 | MEET ME AT THE STATION | 4 | 4 | 20.44 | ✅ | 4 | 1 | ✅ |
+| 7 | COMPUTER SECURITY IS IMPORTANT | 8 | 8 | 22.79 | ✅ | 8 | 3 | ✅ |
+| 8 | INFORMATION SECURITY | 15 | 15 | 12.47 | ✅ | 15 | 1 | ✅ |
+| 9 | SHIFT CIPHER IS EASY... | 6 | 6 | 9.62 | ✅ | 6 | 3 | ✅ |
+| 10 | THIS IS A CRYPTOGRAPHY LAB | 20 | 20 | 23.83 | ✅ | 20 | 3 | ✅ |
+
+### Comparison
+
+| Method | Accuracy | Strength | Weakness |
+|--------|:--------:|----------|----------|
+| Chi-Square | 8/10 (80%) | Fast, no dictionary needed | Fails on short texts (<20 chars) |
+| Dictionary | 10/10 (100%) | Robust even on short texts | Needs a word list; slower |
+
+### Failure Analysis
+- **TC1** (10 letters) and **TC3** (16 letters) failed under χ² because small sample sizes don't conform to standard English frequency distribution.
+- **Improvement:** Combine both methods — use dictionary scoring as fallback when text length < 20 characters.
+
+### Conclusion
+The Shift Cipher's key space (26) makes it trivially breakable. Dictionary scoring is more reliable overall. Chi-square is effective for longer texts but unreliable for short ones. A hybrid approach combining both methods gives optimal results.

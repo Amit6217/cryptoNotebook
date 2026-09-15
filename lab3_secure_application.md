@@ -1,14 +1,10 @@
 # Lab 3 — Secure Application Development (Password Manager)
 
 ## Aim
-To develop a console-based Password Manager in Python with authentication and credential management features, embed intentional security vulnerabilities, and evaluate the detection capabilities and limitations of Bandit static analysis.
+To develop a console-based Password Manager with 3 intentional vulnerabilities and evaluate Bandit's detection capabilities.
 
 ## Brief Theory
-Secure application development demands robust authentication, defense against data leakage, and secure persistent storage.
-Password managers handle high-value secrets, requiring encrypted storage at rest and strict sanitization of diagnostic output.
-Static code analysis tools like Bandit inspect syntactic structures (AST nodes) for known signature patterns such as hardcoded credentials (`B105`).
-However, static tools cannot comprehend execution context, semantic intent, or higher-level business logic.
-Consequently, flaws such as plaintext file persistence and verbose error leaks bypass automated SAST scanners, underscoring the necessity of complementary manual code reviews.
+Secure applications require proper authentication, sanitized outputs, and encrypted storage. Static analysis tools like Bandit detect pattern-based flaws (e.g., hardcoded credentials) but cannot detect logic-level flaws (information leakage, plaintext storage), highlighting the need for manual code review alongside SAST.
 
 ## Algorithm/Flowchart
 
@@ -48,6 +44,16 @@ bandit -r file.py -f txt -o report.txt
 ```
 
 ## Observations
-- The Password Manager functioned correctly across all credential management operations.
-- Bandit detected only the hardcoded credentials (`B105`), catching 1 out of 3 embedded vulnerabilities.
-- Logic-level flaws (debug information leakage and plaintext credential storage) were undetected by static analysis, proving that manual security review is essential.
+
+**Application:** Password Manager (Group 9) | **Code:** 107 LOC | **Default Creds:** `admin / admin123`
+
+### Vulnerability Detection Results
+
+| Vulnerability | Mechanism | Bandit Detected? | Why / Why Not |
+|--------------|-----------|:---:|---------------|
+| Hardcoded Credentials | `ADMIN_PASSWORD = "admin123"` (Line 4–5) | ✅ Yes (B105) | Pattern match on variable name containing `PASSWORD` |
+| Information Leakage | Failed login prints valid credentials in debug output | ❌ No | Logic-level flaw; Bandit can't distinguish sensitive vs normal `print` |
+| Insecure Storage | Passwords saved in plaintext (`passwords.txt`) | ❌ No | Architectural flaw; `file.write()` is standard Python syntax |
+
+**Result:** Bandit detected **1 out of 3** vulnerabilities — proves SAST alone is insufficient; manual review is essential.
+

@@ -1,14 +1,10 @@
 # Lab 1 — Project Foundation & File Analysis
 
 ## Aim
-To set up a modular cryptographic project foundation using Git version control, implement an interactive menu-driven CLI, build a text file statistical analysis module, and integrate an activity logging system.
+To set up a Git-based cryptographic toolkit with a menu-driven CLI, file analysis module, and activity logging system.
 
 ## Brief Theory
-Cryptographic applications require systematic foundations for processing plaintexts, ciphertexts, and audit trails.
-File statistical analysis provides essential metrics such as character count, word count, line count, and unique characters.
-Letter frequency analysis (tracking distribution of letters 'a' through 'z') serves as a fundamental cryptanalytic technique to attack classical substitution ciphers by exploiting language redundancy.
-Modular software design decouples CLI presentation, statistical processing, and data persistence for maintainability.
-Activity logging with timestamps guarantees traceability and reproducibility across all operational workflows.
+A cryptanalysis toolkit requires modular architecture separating the CLI, processing logic, and data persistence. File analysis computes character/word/line counts and letter frequency (a–z) — the foundation for attacking substitution ciphers. Activity logging with timestamps ensures traceability of all operations.
 
 ## Algorithm/Flowchart
 
@@ -49,6 +45,7 @@ git push origin main
 ```
 
 ## Observations
-- The menu-driven CLI successfully routes between cryptographic and analysis options.
-- The file analysis module accurately calculates document metrics and letter frequencies across test datasets.
-- The activity logging system records every menu choice with accurate timestamps in `logs/activity.log`.
+
+- Menu options Encrypt, Decrypt, Attack display "Coming Soon" as no cipher is implemented yet.
+- File analysis correctly computes letter frequency distribution across all test datasets.
+- Every menu selection is logged with an accurate timestamp in `logs/activity.log`.

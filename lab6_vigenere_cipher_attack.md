@@ -1,16 +1,10 @@
 # Lab 6 — Cryptanalysis of Vigenère Cipher
 
 ## Aim
-To implement cryptanalysis of the polyalphabetic Vigenère Cipher using Kasiski Examination, Index of Coincidence (IC), and Chi-Square frequency analysis in C++.
+To cryptanalyze the Vigenère Cipher using Kasiski Examination, Index of Coincidence, and Chi-Square frequency analysis in C++.
 
 ## Brief Theory
-The Vigenère Cipher shifts plaintext letters cyclically by key $K$ of length $m$: $C_i = (P_i + K_{i \pmod m}) \pmod{26}$.
-Repeated plaintext segments separated by distances that are multiples of key length $m$ produce identical ciphertext segments.
-Kasiski Examination finds repeated 3–5 character substrings, calculates spacing distances, and factors them to tally votes for probable key length $m$.
-The Index of Coincidence (IC) calculates the probability that two randomly selected letters are identical:
-$$IC = \frac{\sum_{i=0}^{25} f_i(f_i - 1)}{N(N - 1)}$$
-English text has $IC \approx 0.0667$ while random text has $IC \approx 0.0385$. Group IC averages confirm the correct key length ($m = 14$, $IC \approx 0.0644$).
-Partitioning ciphertext into $m$ independent cosets reduces the polyalphabetic cipher into $m$ monoalphabetic Caesar ciphers, solvable via chi-square goodness-of-fit against standard English frequencies.
+The Vigenère Cipher shifts each letter cyclically using a key of length $m$: $C_i = (P_i + K_{i \bmod m}) \bmod 26$. Kasiski Examination finds repeated patterns and factors their distances to estimate $m$. The Index of Coincidence ($IC \approx 0.0667$ for English, $\approx 0.0385$ for random) validates the key length. The ciphertext is split into $m$ cosets, each attacked as an independent Caesar cipher using chi-square analysis.
 
 ## Algorithm/Flowchart
 
@@ -51,7 +45,33 @@ g++ -std=c++17 -Wall -Wextra -Wpedantic main.cpp kasiski.cpp frequency.cpp vigen
 ```
 
 ## Observations
-- Kasiski examination correctly isolated candidate factors, and Index of Coincidence confirmed the optimal key length of 14 ($IC \approx 0.0644$).
-- Splitting the polyalphabetic ciphertext into 14 cosets effectively transformed it into 14 independent Caesar ciphers.
-- Chi-square analysis accurately resolved each shift, recovering key `AMBROISETHOMAS`.
-- Decrypted text yielded coherent English, and verification confirmed `PASS` with an exact re-encryption match.
+
+### Cryptanalysis Results
+
+| Parameter | Value |
+|-----------|-------|
+| Ciphertext Length | 395 letters (cleaned, A–Z only) |
+| Estimated Key Length | 14 (via Kasiski factor votes + IC validation) |
+| Average IC at m=14 | 0.0644 (close to English IC of 0.0667) |
+| Recovered Key | `AMBROISETHOMAS` |
+| Verification | **PASS** (re-encryption matches original ciphertext exactly) |
+
+### Key Recovery (Per-Coset Shifts)
+
+| Coset | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 |
+|-------|---|---|---|---|---|---|---|---|---|---|----|----|----|----|
+| Shift | 0 | 12 | 1 | 17 | 14 | 8 | 18 | 4 | 19 | 7 | 14 | 12 | 0 | 18 |
+| Letter | A | M | B | R | O | I | S | E | T | H | O | M | A | S |
+
+### Recovered Plaintext (Header)
+> *"Do you know the land where the orange tree blossoms, the country of golden fruits and marvelous roses..."*
+
+### Functions Display Output
+
+| Required Output | Status |
+|----------------|--------|
+| Estimated key length | ✅ Displayed (14) |
+| Frequency table for each group | ✅ Displayed (14 groups × 26 letters) |
+| Recovered key | ✅ Displayed (`AMBROISETHOMAS`) |
+| Recovered plaintext | ✅ Displayed (readable English) |
+| Re-encryption verification | ✅ PASS |
